@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Board Interface</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .task-board {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+
+    .column {
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+      width: 30%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .task-card {
+      background-color: greenyellow;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 5px;
+      border-radius: 5px;
+    }
+
+    .new-task-btn {
+      text-align: center;
+      margin-top: auto;
+      margin-bottom: 10px;
+      color:white;
+      border-width:0px;
+      border-style:solid;
+      background-color: aqua;
+    }
+
+    .heading-section{
+        background-color: pink;
+        color:black;
+        padding:5px;
+        height:30px;
+        width:150px;
+        margin:10px
+    }
+  </style>
+</head>
+<body>
+  <div class="task-board">
+    <div class="column" id="not-started-column">
+      <h3>Not started</h3>
+      <div class="task-card">Card 4</div>
+      <div class="task-card">Card 1</div>
+      <div class="task-card">Card 5</div>
+      <div><button  class="new-task-btn" onclick="addNewCard('not-started-column')">+ New</button></div>
+      <p id="not-started-count">Tasks: 3</p>
+    </div>
+    <div class="column" id="in-progress-column">
+      <div>
+        <h3>In progress</h3>
+      </div>
+      <div class="task-card">Card 2</div>
+      <div><button class="new-task-btn" onclick="addNewCard('in-progress-column')">+ New</button></div>
+      <p id="in-progress-count">Tasks: 1</p>
+    </div>
+    <div class="column" id="completed-column">
+      <h3>Completed</h3>
+      <div class="task-card">Card 3</div>
+      <div><button class="new-task-btn" onclick="addNewCard('completed-column')">+ New</button></div>
+      <p id="completed-count">Tasks: 1</p>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+  <script>
+    // Initialize SortableJS for each column
+    var sortableColumns = document.querySelectorAll('.column');
+
+    sortableColumns.forEach(function(column) {
+      new Sortable(column, {
+        group: 'task-cards',
+        onSort: updateTaskCounts
+      });
+    });
+
+    function addNewCard(columnId) {
+      var column = document.getElementById(columnId);
+      var newCard = document.createElement('div');
+      newCard.className = 'task-card';
+      var cardNumber = column.querySelectorAll('.task-card').length + 1;
+      newCard.textContent = 'Card ' + cardNumber;
+      column.insertBefore(newCard, column.lastElementChild); // Insert before the task count element
+      updateTaskCounts();
+
+      // Refresh Sortable after adding new card
+      var sortable = Sortable.get(column);
+      sortable.destroy(); // Destroy the existing instance
+      new Sortable(column, {
+        group: 'task-cards',
+        onSort: updateTaskCounts
+      });
+    }
+
+    function updateTaskCounts() {
+      var columns = document.querySelectorAll('.column');
+      columns.forEach(function(column) {
+        var countElement = column.querySelector('p');
+        var count = column.querySelectorAll('.task-card').length;
+        countElement.textContent = 'Tasks: ' + count;
+      });
+    }
+  </script>
+</body>
+</html>
